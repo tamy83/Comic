@@ -10,6 +10,7 @@ import com.yensontam.comic.screens.comic.state.ComicActivityAction
 import com.yensontam.comic.screens.comic.state.ComicActivityIntent
 import com.yensontam.comic.screens.comic.state.ComicActivityState
 import com.yensontam.comic.screens.comic.state.ComicActivityViewEffect
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ComicActivityViewModel(val interactor: ComicActivityInteractor) : ViewModel() {
@@ -29,10 +30,10 @@ class ComicActivityViewModel(val interactor: ComicActivityInteractor) : ViewMode
   }
 
   private fun handledLoadedIntent(intent: ComicActivityIntent.LoadedIntent) {
-    val comicId = intent.androidIntent.getStringExtra(EXTRA_COMIC_ID)
+    val comicId = intent.androidIntent.getIntExtra(EXTRA_COMIC_ID, 123)
 
-    if (comicId != null) {
-      viewModelScope.launch {
+    if (comicId != -1) {
+      viewModelScope.launch(Dispatchers.IO) {
         val result = interactor.retrieveComic(comicId)
         when (result) {
           is Data.Success -> {
@@ -51,7 +52,7 @@ class ComicActivityViewModel(val interactor: ComicActivityInteractor) : ViewMode
   }
 
   private fun setState(action: ComicActivityAction) {
-    stateLiveData.value = currentState.consumeAction(action)
+    stateLiveData.postValue(currentState.consumeAction(action))
   }
 
 }

@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.yensontam.comic.databinding.ActivityComicBinding
+import com.yensontam.comic.screens.comic.state.ComicActivityIntent
 import com.yensontam.comic.screens.comic.state.ComicActivityState
 import com.yensontam.comic.screens.comic.state.ComicActivityViewEffect
 import org.koin.android.ext.android.inject
@@ -39,6 +40,8 @@ class ComicActivity : AppCompatActivity() {
     viewModel.effectLiveEvent.observe(this, {
       showViewEffect(it)
     })
+
+    viewModel.onIntentReceived(ComicActivityIntent.LoadedIntent(intent))
   }
 
   private fun renderState(state: ComicActivityState) {
